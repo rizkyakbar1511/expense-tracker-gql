@@ -128,6 +128,11 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
+export type AdditionalEntityFields = {
+  path?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -200,37 +205,86 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CreateTransactionInput: CreateTransactionInput;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
   LoginInput: LoginInput;
   LogoutResponse: ResolverTypeWrapper<LogoutResponse>;
   Mutation: ResolverTypeWrapper<{}>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
-  String: ResolverTypeWrapper<Scalars['String']['output']>;
   Transaction: ResolverTypeWrapper<Transaction>;
   UpdateTransactionInput: UpdateTransactionInput;
   User: ResolverTypeWrapper<User>;
+  AdditionalEntityFields: AdditionalEntityFields;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Boolean: Scalars['Boolean']['output'];
   CreateTransactionInput: CreateTransactionInput;
   Float: Scalars['Float']['output'];
-  ID: Scalars['ID']['output'];
+  String: Scalars['String']['output'];
   LoginInput: LoginInput;
   LogoutResponse: LogoutResponse;
   Mutation: {};
+  ID: Scalars['ID']['output'];
   Query: {};
   SignUpInput: SignUpInput;
-  String: Scalars['String']['output'];
   Transaction: Transaction;
   UpdateTransactionInput: UpdateTransactionInput;
   User: User;
+  AdditionalEntityFields: AdditionalEntityFields;
+  Boolean: Scalars['Boolean']['output'];
 }>;
+
+export type UnionDirectiveArgs = {
+  discriminatorField?: Maybe<Scalars['String']['input']>;
+  additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
+};
+
+export type UnionDirectiveResolver<Result, Parent, ContextType = any, Args = UnionDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type AbstractEntityDirectiveArgs = {
+  discriminatorField: Scalars['String']['input'];
+  additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
+};
+
+export type AbstractEntityDirectiveResolver<Result, Parent, ContextType = any, Args = AbstractEntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type EntityDirectiveArgs = {
+  embedded?: Maybe<Scalars['Boolean']['input']>;
+  additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
+};
+
+export type EntityDirectiveResolver<Result, Parent, ContextType = any, Args = EntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type ColumnDirectiveArgs = {
+  overrideType?: Maybe<Scalars['String']['input']>;
+};
+
+export type ColumnDirectiveResolver<Result, Parent, ContextType = any, Args = ColumnDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type IdDirectiveArgs = { };
+
+export type IdDirectiveResolver<Result, Parent, ContextType = any, Args = IdDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type LinkDirectiveArgs = {
+  overrideType?: Maybe<Scalars['String']['input']>;
+};
+
+export type LinkDirectiveResolver<Result, Parent, ContextType = any, Args = LinkDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type EmbeddedDirectiveArgs = { };
+
+export type EmbeddedDirectiveResolver<Result, Parent, ContextType = any, Args = EmbeddedDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type MapDirectiveArgs = {
+  path: Scalars['String']['input'];
+};
+
+export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type LogoutResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['LogoutResponse'] = ResolversParentTypes['LogoutResponse']> = ResolversObject<{
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -284,3 +338,15 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   User?: UserResolvers<ContextType>;
 }>;
 
+export type DirectiveResolvers<ContextType = any> = ResolversObject<{
+  union?: UnionDirectiveResolver<any, any, ContextType>;
+  abstractEntity?: AbstractEntityDirectiveResolver<any, any, ContextType>;
+  entity?: EntityDirectiveResolver<any, any, ContextType>;
+  column?: ColumnDirectiveResolver<any, any, ContextType>;
+  id?: IdDirectiveResolver<any, any, ContextType>;
+  link?: LinkDirectiveResolver<any, any, ContextType>;
+  embedded?: EmbeddedDirectiveResolver<any, any, ContextType>;
+  map?: MapDirectiveResolver<any, any, ContextType>;
+}>;
+
+import { ObjectId } from 'mongodb';

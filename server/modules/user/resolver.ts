@@ -1,14 +1,97 @@
-import { Resolvers } from "../../types/resolver.types";
+import { genSalt, hash } from "bcrypt-ts";
+import User from "../../models/user.model";
+import { Resolvers, User as userResolverTypes } from "../../types/resolver.types";
 
 const userResolver: Resolvers = {
   Query: {
-    users: () => [],
-    user: (parent, { userId }) => {
-      return users.find((user) => user._id === userId);
+    authUser: async (_, __, ctx) => {
+      try {
+        const user = await ctx.getUser();
+        return user;
+      } catch (error) {
+        console.error("Error in authUser :", error);
+        throw new Error((error as Error).message || "Internal server error");
+      }
+    },
+    user: async (_, { userId }) => {
+      try {
+        const userDoc = await User.findById(userId);
+        const user: userResolverTypes = {
+          _id: userDoc!._id.toHexString(),
+          username: userDoc!.username,
+          name: userDoc!.name,
+          profilePicture: userDoc!.profilePicture,
+          gender: userDoc!.gender as string,
+          password: userDoc!.password,
+        };
+        return user;
+      } catch (error) {
+        console.error("Error in user query :", error);
+        throw new Error((error as Error).message || "Internal server error");
+      }
     },
   },
   Mutation: {
-    signUp: (parent, { input }) => {},
+    signUp: async (_, { input }, ctx) => {
+      try {
+        const { username, password, name, gender } = input;
+
+        if (!username || !password || !name || !gender) throw new Error("All fields are required");
+
+        const existingUser = await User.findOne({ username });
+
+        if (existingUser) throw new Error("User already exists");
+
+        const salt = await genSalt(10);
+        const hashedPassword = hash(password, salt);
+        const profilePicture = `https://avatar.iran.liara.run/public/${
+          gender === "male" ? "boy" : "girl"
+        }?username=${username}`;
+
+        const newUser = new User({
+          username,
+          password: hashedPassword,
+          gender,
+          profilePicture,
+        });
+
+        await newUser.save();
+        await ctx.login(newUser);
+        return {
+          _id: newUser._id.toHexString(),
+          username,
+          password,
+          name,
+          gender,
+        };
+      } catch (error) {
+        console.error("Error in 'signUp :", error);
+        throw new Error((error as Error).message || "Internal server error");
+      }
+    },
+    login: async (_, { input }, ctx) => {
+      try {
+        const { username, password } = input;
+        const { user } = await ctx.authenticate("graphql-local", { username, password });
+        return user;
+      } catch (error) {
+        console.error("Error in 'login :", error);
+        throw new Error((error as Error).message || "Internal server error");
+      }
+    },
+    logout: async (_, __, ctx) => {
+      try {
+        await ctx.logout();
+        ctx.req.session.destroy((err: unknown) => {
+          if (err) throw err;
+        });
+        ctx.res.clearCookie("connect.sid");
+        return { message: "Logged out successfully" };
+      } catch (error) {
+        console.error("Error in 'logout :", error);
+        throw new Error((error as Error).message || "Internal server error");
+      }
+    },
   },
 };
 
