@@ -1,12 +1,12 @@
-type Transaction {
-  _id: ID!
-  userId: ID!
-  description: String!
-  paymentType: String!
-  category: String!
-  amount: Float!
-  location: String
-  date: String!
+type Transaction @entity {
+  _id: ID! @id
+  userId: ID! @Column
+  description: String! @column
+  paymentType: String! @column
+  category: String! @column
+  amount: Float! @column
+  location: String @column
+  date: String! @column(overrideType: String)
 }
 
 type Query {

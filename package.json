@@ -15,6 +15,7 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^4.11.0",
+    "@graphql-codegen/typescript-mongodb": "^3.0.0",
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/merge": "^9.0.7",
     "bcrypt-ts": "^5.0.2",

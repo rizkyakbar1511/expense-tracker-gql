@@ -1,10 +1,10 @@
-type User {
-  _id: ID!
-  username: String!
-  name: String!
-  password: String!
-  profilePicture: String
-  gender: String!
+type User @entity {
+  _id: ID! @id
+  username: String! @column
+  name: String! @column
+  password: String! @column
+  profilePicture: String @column
+  gender: String! @column
 }
 
 type Query {
