@@ -10,7 +10,7 @@ import path from "path";
  */
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
-
+console.log("dirname", __dirname);
 // Load and merge all .graphql files
 const typesArray = loadFilesSync(path.join(__dirname, "./**/*.graphql"));
 export default mergeTypeDefs([DIRECTIVES, ...typesArray]);

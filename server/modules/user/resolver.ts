@@ -1,6 +1,6 @@
 import { genSalt, hash } from "bcrypt-ts";
 import User from "../../models/user.model";
-import { Resolvers, User as userResolverTypes } from "../../types/resolver.types";
+import { Resolvers, UserDbObject } from "../../types/resolver.types";
 
 const userResolver: Resolvers = {
   Query: {
@@ -13,18 +13,10 @@ const userResolver: Resolvers = {
         throw new Error((error as Error).message || "Internal server error");
       }
     },
-    user: async (_, { userId }) => {
+    user: async (_, { userId }): Promise<UserDbObject> => {
       try {
-        const userDoc = await User.findById(userId);
-        const user: userResolverTypes = {
-          _id: userDoc!._id.toHexString(),
-          username: userDoc!.username,
-          name: userDoc!.name,
-          profilePicture: userDoc!.profilePicture,
-          gender: userDoc!.gender as string,
-          password: userDoc!.password,
-        };
-        return user;
+        const userDoc = (await User.findById(userId)) as UserDbObject;
+        return userDoc;
       } catch (error) {
         console.error("Error in user query :", error);
         throw new Error((error as Error).message || "Internal server error");
@@ -32,7 +24,7 @@ const userResolver: Resolvers = {
     },
   },
   Mutation: {
-    signUp: async (_, { input }, ctx) => {
+    signUp: async (_, { input }, ctx): Promise<UserDbObject> => {
       try {
         const { username, password, name, gender } = input;
 
@@ -57,13 +49,7 @@ const userResolver: Resolvers = {
 
         await newUser.save();
         await ctx.login(newUser);
-        return {
-          _id: newUser._id.toHexString(),
-          username,
-          password,
-          name,
-          gender,
-        };
+        return newUser as UserDbObject;
       } catch (error) {
         console.error("Error in 'signUp :", error);
         throw new Error((error as Error).message || "Internal server error");

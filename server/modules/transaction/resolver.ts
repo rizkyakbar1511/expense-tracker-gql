@@ -1,6 +1,6 @@
 import Transaction from "../../models/transaction.model";
-import { Resolvers } from "../../types/resolver.types";
-import { TransactionDbObject } from "../../types/schema.types";
+import { Resolvers, TransactionDbObject } from "../../types/resolver.types";
+import { Document } from "mongoose";
 
 const transactionResolver: Resolvers = {
   Query: {
@@ -28,36 +28,32 @@ const transactionResolver: Resolvers = {
     //TODO => ADD categoryStatistics query
   },
   Mutation: {
-    createTransaction: async (_, { input }, ctx) => {
+    createTransaction: async (_, { input }, ctx): Promise<TransactionDbObject> => {
       try {
-        const newTransaction = new Transaction({
-          ...input,
-          userId: ctx.getUser()._id,
-        });
+        const newTransaction = new Transaction({ input });
         await newTransaction.save();
-        return newTransaction;
+        return newTransaction as TransactionDbObject;
       } catch (error) {
         console.error("Error in transaction mutation : ", error);
         throw new Error("Internal server error");
       }
     },
-    updateTransaction: async (_, { input }) => {
+
+    updateTransaction: async (_, { input }): Promise<TransactionDbObject> => {
       try {
-        const updatedTransaction = (await Transaction.findByIdAndUpdate(
-          input.transactionId,
-          input,
-          { new: true }
-        )) as TransactionDbObject;
-        return updatedTransaction;
+        const updatedTransaction = await Transaction.findByIdAndUpdate(input.transactionId, input, {
+          new: true,
+        });
+        return updatedTransaction as TransactionDbObject;
       } catch (error) {
         console.error("Error updating transaction : ", error);
         throw new Error("Internal server error");
       }
     },
-    deleteTransaction: async (_, { transactionId }) => {
+    deleteTransaction: async (_, { transactionId }): Promise<TransactionDbObject> => {
       try {
         const deletedTransaction = await Transaction.findByIdAndDelete(transactionId);
-        return deletedTransaction;
+        return deletedTransaction as TransactionDbObject;
       } catch (error) {
         console.error("Error deleting transaction : ", error);
         throw new Error("Internal server error");
