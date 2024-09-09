@@ -4,10 +4,17 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { MdLogout } from "react-icons/md";
 import TransactionForm from "@/components/TransactionForm";
 import Cards from "@/components/Cards";
+import { useMutation } from "@apollo/client";
+import { LOGOUT } from "@/graphql/mutations/user.mutation";
+import toast from "react-hot-toast";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const HomePage = () => {
+  const [logout, { loading }] = useMutation(LOGOUT, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
+
   const chartData = {
     labels: ["Saving", "Expense", "Investment"],
     datasets: [
@@ -24,11 +31,14 @@ const HomePage = () => {
     ],
   };
 
-  const handleLogout = () => {
-    console.log("Logging out...");
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Error :", error);
+      toast.error((error as Error).message);
+    }
   };
-
-  const loading = false;
 
   return (
     <>
@@ -37,12 +47,14 @@ const HomePage = () => {
           <p className="md:text-4xl text-2xl lg:text-4xl font-bold text-center relative z-50 mb-4 mr-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">
             Spend wisely, track wisely
           </p>
-          <img
-            src={"https://tecdn.b-cdn.net/img/new/avatars/2.webp"}
+          {/* <img
+            src={location.state.res.data.login.profilePicture}
             className="w-11 h-11 rounded-full border cursor-pointer"
             alt="Avatar"
-          />
-          {!loading && <MdLogout className="mx-2 w-5 h-5 cursor-pointer" onClick={handleLogout} />}
+          /> */}
+          {!loading && (
+            <MdLogout className="mx-2 w-5 h-5 cursor-pointer text-white" onClick={handleLogout} />
+          )}
           {/* loading spinner */}
           {loading && (
             <div className="w-6 h-6 border-t-2 border-b-2 mx-2 rounded-full animate-spin"></div>

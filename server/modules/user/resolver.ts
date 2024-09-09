@@ -35,12 +35,13 @@ const userResolver: Resolvers = {
         if (existingUser) throw new Error("User already exists");
 
         const salt = await genSalt(10);
-        const hashedPassword = hash(password, salt);
+        const hashedPassword = await hash(password, salt);
         const profilePicture = `https://avatar.iran.liara.run/public/${
           gender === "male" ? "boy" : "girl"
         }?username=${username}`;
 
         const newUser = new User({
+          name,
           username,
           password: hashedPassword,
           gender,
@@ -59,6 +60,8 @@ const userResolver: Resolvers = {
       try {
         const { username, password } = input;
         const { user } = await ctx.authenticate("graphql-local", { username, password });
+
+        await ctx.login(user);
         return user;
       } catch (error) {
         console.error("Error in 'login :", error);

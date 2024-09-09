@@ -1,12 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import InputField from "../components/InputField";
+import toast from "react-hot-toast";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "@/graphql/mutations/user.mutation";
 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
   });
+  const [login, { loading }] = useMutation(LOGIN, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -16,9 +23,19 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(loginData);
+    try {
+      const res = await login({
+        variables: {
+          input: loginData,
+        },
+      });
+      navigate("/", { state: { res } });
+    } catch (error) {
+      console.error("Error :", error);
+      toast.error((error as Error).message);
+    }
   };
 
   return (
@@ -53,6 +70,7 @@ const LoginPage = () => {
                   className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300
 										disabled:opacity-50 disabled:cursor-not-allowed
 									"
+                  disabled={loading}
                 >
                   Login
                 </button>
