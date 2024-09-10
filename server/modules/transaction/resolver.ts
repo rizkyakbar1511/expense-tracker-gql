@@ -16,7 +16,7 @@ const transactionResolver: Resolvers = {
         throw new Error("Internal server error");
       }
     },
-    transaction: async (_, { transactionId }, ctx) => {
+    transaction: async (_, { transactionId }) => {
       try {
         const transaction = (await Transaction.findById(transactionId)) as TransactionDbObject;
         return transaction;
@@ -30,7 +30,7 @@ const transactionResolver: Resolvers = {
   Mutation: {
     createTransaction: async (_, { input }, ctx): Promise<TransactionDbObject> => {
       try {
-        const newTransaction = new Transaction({ input });
+        const newTransaction = new Transaction({ ...input, userId: ctx.getUser()._id });
         await newTransaction.save();
         return newTransaction as TransactionDbObject;
       } catch (error) {
