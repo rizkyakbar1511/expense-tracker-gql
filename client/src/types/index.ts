@@ -1,3 +1,7 @@
+export type TransactionStatistics = Pick<Transaction, "category"> & {
+  totalAmount: number;
+};
+
 export type Transaction = {
   _id: string;
   userId: string;
@@ -7,4 +11,11 @@ export type Transaction = {
   description: string;
   location?: string;
   paymentType: string;
+};
+
+export type User = {
+  _id: string;
+  username: string;
+  name: string;
+  profilePicture: string;
 };

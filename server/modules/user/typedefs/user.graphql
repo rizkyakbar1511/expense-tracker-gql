@@ -5,6 +5,7 @@ type User @entity {
   password: String! @column
   profilePicture: String @column
   gender: String! @column
+  transactions: [Transaction!] @link
 }
 
 type Query {

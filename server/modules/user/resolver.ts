@@ -1,6 +1,7 @@
 import { genSalt, hash } from "bcrypt-ts";
 import User from "../../models/user.model";
-import { Resolvers, UserDbObject } from "../../types/resolver.types";
+import { Resolvers, TransactionDbObject, UserDbObject } from "../../types/resolver.types";
+import Transaction from "../../models/transaction.model";
 
 const userResolver: Resolvers = {
   Query: {
@@ -78,6 +79,19 @@ const userResolver: Resolvers = {
         return { message: "Logged out successfully" };
       } catch (error) {
         console.error("Error in 'logout :", error);
+        throw new Error((error as Error).message || "Internal server error");
+      }
+    },
+  },
+  User: {
+    transactions: async (parent, _, __) => {
+      try {
+        const transactions = (await Transaction.find({
+          userId: parent._id,
+        })) as TransactionDbObject[];
+        return transactions;
+      } catch (error) {
+        console.log("Error in 'user.transactions resolver' :", error);
         throw new Error((error as Error).message || "Internal server error");
       }
     },

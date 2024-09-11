@@ -20,6 +20,12 @@ export type Scalars = {
   Float: { input: number; output: number };
 };
 
+export type CategoryStatistics = {
+  __typename?: "CategoryStatistics";
+  category: Scalars["String"]["output"];
+  totalAmount: Scalars["Float"]["output"];
+};
+
 export type CreateTransactionInput = {
   amount: Scalars["Float"]["input"];
   category: Scalars["String"]["input"];
@@ -72,6 +78,7 @@ export type MutationUpdateTransactionArgs = {
 export type Query = {
   __typename?: "Query";
   authUser?: Maybe<User>;
+  categoryStatistics?: Maybe<Array<CategoryStatistics>>;
   transaction?: Maybe<Transaction>;
   transactions?: Maybe<Array<Transaction>>;
   user?: Maybe<User>;
@@ -122,6 +129,7 @@ export type User = {
   name: Scalars["String"]["output"];
   password: Scalars["String"]["output"];
   profilePicture?: Maybe<Scalars["String"]["output"]>;
+  transactions?: Maybe<Array<Transaction>>;
   username: Scalars["String"]["output"];
 };
 
@@ -217,9 +225,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  CreateTransactionInput: CreateTransactionInput;
-  Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
+  CategoryStatistics: ResolverTypeWrapper<CategoryStatistics>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
+  Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
+  CreateTransactionInput: CreateTransactionInput;
   LoginInput: LoginInput;
   LogoutResponse: ResolverTypeWrapper<LogoutResponse>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -235,9 +244,10 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  CreateTransactionInput: CreateTransactionInput;
-  Float: Scalars["Float"]["output"];
+  CategoryStatistics: CategoryStatistics;
   String: Scalars["String"]["output"];
+  Float: Scalars["Float"]["output"];
+  CreateTransactionInput: CreateTransactionInput;
   LoginInput: LoginInput;
   LogoutResponse: LogoutResponse;
   Mutation: {};
@@ -338,6 +348,15 @@ export type MapDirectiveResolver<
   Args = MapDirectiveArgs
 > = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
+export type CategoryStatisticsResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["CategoryStatistics"] = ResolversParentTypes["CategoryStatistics"]
+> = ResolversObject<{
+  category?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type LogoutResponseResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["LogoutResponse"] = ResolversParentTypes["LogoutResponse"]
@@ -388,6 +407,11 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = ResolversObject<{
   authUser?: Resolver<Maybe<ResolversTypes["User"]>, ParentType, ContextType>;
+  categoryStatistics?: Resolver<
+    Maybe<Array<ResolversTypes["CategoryStatistics"]>>,
+    ParentType,
+    ContextType
+  >;
   transaction?: Resolver<
     Maybe<ResolversTypes["Transaction"]>,
     ParentType,
@@ -428,11 +452,13 @@ export type UserResolvers<
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   password?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   profilePicture?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  transactions?: Resolver<Maybe<Array<ResolversTypes["Transaction"]>>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  CategoryStatistics?: CategoryStatisticsResolvers<ContextType>;
   LogoutResponse?: LogoutResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
@@ -453,14 +479,14 @@ export type DirectiveResolvers<ContextType = any> = ResolversObject<{
 
 import { ObjectId } from "mongodb";
 export type TransactionDbObject = {
-  _id: unknown;
-  userId: unknown;
+  _id: ObjectId;
   amount: number;
   category: string;
-  date: Date;
+  date: string;
   description: string;
   location?: Maybe<string>;
   paymentType: string;
+  userId: string;
 };
 
 export type UserDbObject = {
@@ -469,5 +495,6 @@ export type UserDbObject = {
   name: string;
   password: string;
   profilePicture?: Maybe<string>;
+  transactions?: Maybe<Array<TransactionDbObject["_id"]>>;
   username: string;
 };

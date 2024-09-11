@@ -20,13 +20,14 @@ const categoryColorMap = {
 
 type CardProps = {
   transaction: Transaction;
+  profilePicture?: string;
 };
 
-const Card = ({ transaction }: CardProps) => {
+const Card = ({ transaction, profilePicture }: CardProps) => {
   let { category, description } = transaction;
   const { amount, location, _id, date, paymentType } = transaction;
   const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION, {
-    refetchQueries: ["GetTransactions"],
+    refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
   });
   const cardClass = categoryColorMap[category];
   const formattedDate = formatDate(date);
@@ -76,11 +77,7 @@ const Card = ({ transaction }: CardProps) => {
         </p>
         <div className="flex justify-between items-center">
           <p className="text-xs text-black font-bold">{formattedDate}</p>
-          <img
-            src={"https://tecdn.b-cdn.net/img/new/avatars/2.webp"}
-            className="h-8 w-8 border rounded-full"
-            alt=""
-          />
+          <img src={profilePicture} className="h-8 w-8 border rounded-full" alt="" />
         </div>
       </div>
     </div>
