@@ -1,7 +1,7 @@
 import { genSalt, hash } from "bcrypt-ts";
-import User from "../../models/user.model";
-import { Resolvers, TransactionDbObject, UserDbObject } from "../../types/resolver.types";
-import Transaction from "../../models/transaction.model";
+import User from "../../models/user.model.js";
+import { Resolvers, TransactionDbObject, UserDbObject } from "../../types/resolver.types.js";
+import Transaction from "../../models/transaction.model.js";
 
 const userResolver: Resolvers = {
   Query: {

@@ -9,15 +9,18 @@ import passport from "passport";
 import session from "express-session";
 import connectMongo from "connect-mongodb-session";
 import { buildContext } from "graphql-passport";
+import path from "path";
 
-import resolvers from "./modules/resolvers";
-import typeDefs from "./modules/typedefs";
-import { connectDB } from "./utils/connectDB";
-import { passportConfig } from "./passport/passport.config";
+import resolvers from "./modules/resolvers.js";
+import typeDefs from "./modules/typedefs.js";
+import { connectDB } from "./utils/connectDB.js";
+import { passportConfig } from "./passport/passport.config.js";
 
 dotenv.config();
 passportConfig();
 
+const __dirname = path.resolve();
+console.log("🚀 ~ __dirname:", __dirname);
 const PORT = process.env.PORT || 4000;
 const app = express();
 
@@ -59,6 +62,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  introspection: process.env.NODE_ENV !== "production",
 });
 
 await server.start();
@@ -74,6 +78,12 @@ app.use(
     context: async ({ req, res }) => buildContext({ req, res }),
   })
 );
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+});
 
 await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
 await connectDB();

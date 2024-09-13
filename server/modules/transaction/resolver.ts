@@ -1,5 +1,5 @@
-import Transaction from "../../models/transaction.model";
-import { Resolvers, TransactionDbObject } from "../../types/resolver.types";
+import Transaction from "../../models/transaction.model.js";
+import { Resolvers, TransactionDbObject } from "../../types/resolver.types.js";
 
 const transactionResolver: Resolvers = {
   Query: {

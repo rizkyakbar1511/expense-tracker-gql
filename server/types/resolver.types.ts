@@ -477,16 +477,15 @@ export type DirectiveResolvers<ContextType = any> = ResolversObject<{
   map?: MapDirectiveResolver<any, any, ContextType>;
 }>;
 
-import { ObjectId } from "mongodb";
 export type TransactionDbObject = {
-  _id: ObjectId;
+  _id: unknown;
   amount: number;
   category: string;
-  date: string;
+  date: Date;
   description: string;
   location?: Maybe<string>;
   paymentType: string;
-  userId: string;
+  userId: unknown;
 };
 
 export type UserDbObject = {
