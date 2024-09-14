@@ -10,6 +10,7 @@ import session from "express-session";
 import connectMongo from "connect-mongodb-session";
 import { buildContext } from "graphql-passport";
 import path from "path";
+import serverless from "serverless-http";
 
 import resolvers from "./modules/resolvers.js";
 import typeDefs from "./modules/typedefs.js";
@@ -89,5 +90,7 @@ app.get("*", (req, res) => {
   await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
   await connectDB();
 })();
+
+export const handler = serverless(app);
 
 console.log(`🚀 Server ready at port ${PORT}`);
