@@ -6,7 +6,7 @@
     "build:tsc": "tsc --build",
     "build:graphql": "copyfiles ./modules/**/typedefs/*.graphql ./dist/",
     "build:client": "cd .. && cd client && npm install && npm run build",
-    "build": "npm install && concurrently npm:build:*",
+    "build": "npm install && concurrently npm:build:* && npm start",
     "start": "NODE_ENV=production && node dist/index.js",
     "start:dev": "NODE_ENV=development && tsx watch index.ts",
     "codegen": "graphql-codegen --config codegen.ts"
