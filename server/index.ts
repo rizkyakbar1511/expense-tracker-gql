@@ -65,7 +65,7 @@ const server = new ApolloServer({
   introspection: process.env.NODE_ENV !== "production",
 });
 
-await server.start();
+(async () => await server.start())();
 
 app.use(
   "/graphql",
@@ -85,7 +85,9 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
-await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
-await connectDB();
+(async () => {
+  await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
+  await connectDB();
+})();
 
 console.log(`🚀 Server ready at port ${PORT}`);
