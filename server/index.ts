@@ -20,8 +20,8 @@ import { passportConfig } from "./passport/passport.config.js";
 dotenv.config();
 passportConfig();
 
-const __dirname = path.resolve();
-console.log("🚀 ~ __dirname:", __dirname);
+const __pathdirname = path.resolve();
+console.log("🚀 ~ __pathdirname:", __pathdirname);
 const PORT = process.env.PORT || 4000;
 const app = express();
 
@@ -80,10 +80,10 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__pathdirname, "../client/dist")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+  res.sendFile(path.join(__pathdirname, "../client/dist", "index.html"));
 });
 
 (async () => {
