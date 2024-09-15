@@ -1,6 +1,10 @@
+import { createRequire } from "module";
 import User from "../../models/user.model.js";
 import { Resolvers, TransactionDbObject, UserDbObject } from "../../types/resolver.types.js";
 import Transaction from "../../models/transaction.model.js";
+
+const require = createRequire(import.meta.url);
+const { genSalt, hash } = require("bcrypt-ts");
 
 const userResolver: Resolvers = {
   Query: {
@@ -26,7 +30,6 @@ const userResolver: Resolvers = {
   Mutation: {
     signUp: async (_, { input }, ctx): Promise<UserDbObject> => {
       try {
-        const { genSalt, hash } = await import("bcrypt-ts");
         const { username, password, name, gender } = input;
 
         if (!username || !password || !name || !gender) throw new Error("All fields are required");

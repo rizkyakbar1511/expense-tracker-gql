@@ -1,4 +1,5 @@
 import passport from "passport";
+import { compare } from "bcrypt-ts";
 import { GraphQLLocalStrategy } from "graphql-passport";
 
 import User from "../models/user.model.js";
@@ -24,7 +25,6 @@ export const passportConfig = async () => {
   passport.use(
     new GraphQLLocalStrategy(async (username, password, done) => {
       try {
-        const { compare } = await import("bcrypt-ts");
         const user = await User.findOne({ username });
 
         if (!user) throw new Error("Invalid username or password");
