@@ -1,7 +1,10 @@
-import { genSalt, hash } from "bcrypt-ts";
+import { createRequire } from "module";
 import User from "../../models/user.model.js";
 import { Resolvers, TransactionDbObject, UserDbObject } from "../../types/resolver.types.js";
 import Transaction from "../../models/transaction.model.js";
+
+const require = createRequire(import.meta.url);
+const bcrypt = require("bcrypt-ts");
 
 const userResolver: Resolvers = {
   Query: {
@@ -35,8 +38,8 @@ const userResolver: Resolvers = {
 
         if (existingUser) throw new Error("User already exists");
 
-        const salt = await genSalt(10);
-        const hashedPassword = await hash(password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
         const profilePicture = `https://avatar.iran.liara.run/public/${
           gender === "male" ? "boy" : "girl"
         }?username=${username}`;
