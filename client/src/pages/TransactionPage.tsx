@@ -1,6 +1,6 @@
 import TransactionFormSkeleton from "@/components/TransactionFormSkeleton";
 import { UPDATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
-import { GET_TRANSACTION } from "@/graphql/queries/transaction.query";
+import { GET_TRANSACTION, GET_TRANSACTION_STATISTICS } from "@/graphql/queries/transaction.query";
 import { Transaction } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
@@ -13,7 +13,7 @@ const TransactionPage = () => {
     variables: { id },
   });
   const [updateTransaction, { loading: loadingUpdate }] = useMutation(UPDATE_TRANSACTION, {
-    refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
+    refetchQueries: [{ query: GET_TRANSACTION }, { query: GET_TRANSACTION_STATISTICS }],
   });
 
   const [formData, setFormData] = useState({

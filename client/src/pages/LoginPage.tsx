@@ -4,6 +4,7 @@ import InputField from "../components/InputField";
 import toast from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "@/graphql/mutations/user.mutation";
+import { GET_AUTH_USER } from "@/graphql/queries/user.query";
 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
@@ -11,7 +12,7 @@ const LoginPage = () => {
     password: "",
   });
   const [login, { loading }] = useMutation(LOGIN, {
-    refetchQueries: ["GetAuthenticatedUser"],
+    refetchQueries: [{ query: GET_AUTH_USER }],
   });
   const navigate = useNavigate();
 

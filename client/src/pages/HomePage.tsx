@@ -47,7 +47,7 @@ type ChartData = {
 
 const HomePage = () => {
   const [logout, { loading, client }] = useMutation(LOGOUT, {
-    refetchQueries: ["GetAuthenticatedUser"],
+    refetchQueries: [{ query: GET_AUTH_USER }],
   });
 
   const { data } = useQuery<{ categoryStatistics: TransactionStatistics[] }>(
