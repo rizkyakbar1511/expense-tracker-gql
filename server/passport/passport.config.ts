@@ -1,8 +1,11 @@
 import passport from "passport";
-import { compare } from "bcrypt-ts";
 import { GraphQLLocalStrategy } from "graphql-passport";
 
 import User from "../models/user.model.js";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const bcrypt = require("bcrypt-ts");
 
 export const passportConfig = async () => {
   passport.serializeUser((user, done) => {
@@ -29,7 +32,7 @@ export const passportConfig = async () => {
 
         if (!user) throw new Error("Invalid username or password");
 
-        const validPassword = await compare(password as string, user.password);
+        const validPassword = await bcrypt.compare(password as string, user.password);
 
         if (!validPassword) throw new Error("Invalid username or password");
 
