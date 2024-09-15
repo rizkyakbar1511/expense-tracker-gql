@@ -15,10 +15,13 @@ import resolvers from "./modules/resolvers.js";
 import typeDefs from "./modules/typedefs.js";
 import { connectDB } from "./utils/connectDB.js";
 import { passportConfig } from "./passport/passport.config.js";
+import job from "./cron.js";
 
 (async () => {
   dotenv.config();
   passportConfig();
+  job.start();
+
   const __pathdirname = path.resolve();
   const PORT = process.env.PORT || 4000;
   const app = express();
